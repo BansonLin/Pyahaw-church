@@ -337,8 +337,44 @@ for i, (k, c) in enumerate(S.SEG_COLOR.items()):
     ws5.cell(lg + 1 + i, 2).fill = hex_fill(c)
     ws5.cell(lg + 1 + i, 3, f"{k}：{S.SEG_LABEL[k]}")
 
-import os
-os.makedirs("docs", exist_ok=True)
+# ============================================================
+# 工作表 6：採購執行計畫（倒推表）
+# ============================================================
+ws6 = wb.create_sheet("採購執行計畫")
+ws6.cell(1, 1, "碧侯教會 室內裝修工程 — 採購執行計畫（由需求進場日倒推下單/詢價）").font = Font(bold=True, size=14)
+ws6.cell(2, 1, "依詢價啟動日排序；🔴 立即＝啟動日已到(今日 6/15)。下單截止=需求進場−供應期；詢價啟動=下單截止−詢價決標期。").font = Font(size=9, color="555555")
+pheads = ["採購包", "類別", "金額(NT$)", "需求進場", "下單截止", "詢價啟動", "狀態", "備註"]
+pw = [40, 16, 13, 11, 11, 11, 9, 30]
+for c, (h, w) in enumerate(zip(pheads, pw), start=1):
+    cell = ws6.cell(4, c, h); cell.fill = HEAD_FILL; cell.font = WHITE
+    cell.alignment = Alignment(horizontal="center", vertical="center")
+    ws6.column_dimensions[get_column_letter(c)].width = w
+today_d = S._d(S.TODAY)
+RED = PatternFill("solid", fgColor="FCE4E4")
+YEL = PatternFill("solid", fgColor="FFF6E0")
+r = 5
+for name, cat, need, po, kick, val, note, urg in S.procurement():
+    days = (kick - today_d).days
+    st = "🔴 立即" if urg else ("🟡 將到" if days <= 30 else "待辦")
+    ws6.cell(r, 1, name)
+    cc = ws6.cell(r, 2, cat); cc.alignment = Alignment(horizontal="center"); cc.font = Font(size=9)
+    a3 = ws6.cell(r, 3, val if val is not None else "—")
+    a3.number_format = "#,##0"; a3.alignment = Alignment(horizontal="right")
+    for col, d in ((4, need), (5, po), (6, kick)):
+        cx = ws6.cell(r, col, d); cx.number_format = "m/d"; cx.alignment = Alignment(horizontal="center")
+    sc = ws6.cell(r, 7, st); sc.alignment = Alignment(horizontal="center")
+    ws6.cell(r, 8, note).font = Font(size=9)
+    if urg:
+        for c in range(1, 9): ws6.cell(r, c).fill = RED
+        ws6.cell(r, 1).font = Font(bold=True, color="C0392B")
+    elif days <= 30:
+        for c in range(1, 9): ws6.cell(r, c).fill = YEL
+    for c in range(1, 9):
+        ws6.cell(r, c).border = BORDER
+    r += 1
+ws6.freeze_panes = "A5"
+ws6.auto_filter.ref = f"A4:H{r-1}"
+
 out = "docs/工程進度甘特圖.xlsx"
 wb.save(out)
-print("saved:", out, "| weeks:", n_weeks, "| tasks:", len(TASKS), "| zones:", len(S.zones()))
+print("saved:", out, "| sheets:", len(wb.sheetnames), "| procurement:", len(S.procurement()))

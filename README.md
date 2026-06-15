@@ -18,6 +18,8 @@
 | [細部施工順序.md](docs/細部施工順序.md) | 逐區施工工序明細＋空間類型對照＋跨區依存 |
 | [分區進場時程圖.png](docs/分區進場時程圖.png) | 分區進場時程圖（各區工序對應實際日期、進場順位、退場日） |
 | [分區進場時程表.md](docs/分區進場時程表.md) | 分區進場時程表＋進場波次＋現場調度用法 |
+| [採購時程倒推圖.png](docs/採購時程倒推圖.png) | 採購時程倒推圖（由需求進場日反推下單/詢價，標示立即啟動項） |
+| [採購執行計畫建議.md](docs/採購執行計畫建議.md) | 採購執行計畫（倒推表、立即清單、發包波次、物流、付款、風險） |
 | [工程進度表.md](docs/工程進度表.md) | 工項預算總覽、進度明細、里程碑、關鍵路徑 |
 | [工程安排建議.md](docs/工程安排建議.md) | 工程安排建議書（風險、備料、工序、界面整合、管控） |
 
@@ -39,6 +41,7 @@ PYTHONPATH=scripts python scripts/generate_excel.py     # → docs/工程進度�
 PYTHONPATH=scripts python scripts/generate_markdown.py  # → docs/工程進度表.md
 PYTHONPATH=scripts python scripts/generate_sequence.py       # → docs/細部施工順序圖.png
 PYTHONPATH=scripts python scripts/generate_zone_schedule.py  # → docs/分區進場時程圖.png + 表.md
+PYTHONPATH=scripts python scripts/generate_procurement.py    # → docs/採購時程倒推圖.png + 建議.md
 PYTHONPATH=scripts python scripts/generate_report_pdf.py     # → docs/碧侯教會_工程規劃報告.pdf
 ```
 
