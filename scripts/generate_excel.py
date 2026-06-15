@@ -269,8 +269,76 @@ for kind, text in advice:
         cell.alignment = Alignment(wrap_text=True, vertical="top")
     rr += 1
 
+# ============================================================
+# 工作表 5：分區進場時程（週曆式，rows=區域）
+# ============================================================
+ws5 = wb.create_sheet("分區進場時程")
+ZF = 8  # 第一個週欄 (H)
+ws5.cell(1, 1, "碧侯教會 室內裝修工程 — 分區進場時程（各區工序對應實際日期）").font = Font(bold=True, size=15)
+ws5.cell(2, 1, "色塊＝該區當期工種；依進場順位排列。開工(進場保護) 2026/06/19。").font = Font(size=10, color="555555")
+zheads = ["順位", "樓層", "區域", "類型", "進場", "退場", "週"]
+for c, h in enumerate(zheads, start=1):
+    cell = ws5.cell(4, c, h); cell.fill = HEAD_FILL; cell.font = WHITE
+    cell.alignment = Alignment(horizontal="center", vertical="center")
+    ws5.merge_cells(start_row=4, start_column=c, end_row=5, end_column=c)
+# 月/週表頭
+curm = None; mstart = None
+for w in range(n_weeks):
+    col = ZF + w
+    wk = grid_start + dt.timedelta(weeks=w)
+    wc = ws5.cell(5, col, f"{wk.month}/{wk.day}")
+    wc.font = Font(size=8, color="FFFFFF", bold=(week_idx(TODAY) == w))
+    wc.alignment = Alignment(horizontal="center")
+    wc.fill = TODAY_HEAD if week_idx(TODAY) == w else MONTH_FILL
+    if wk.month != curm:
+        if curm is not None:
+            ws5.merge_cells(start_row=4, start_column=mstart, end_row=4, end_column=col - 1)
+        curm = wk.month; mstart = col
+        mc = ws5.cell(4, col, f"{wk.year}/{curm}月")
+        mc.fill = MONTH_FILL; mc.font = Font(size=9, color="FFFFFF", bold=True)
+        mc.alignment = Alignment(horizontal="center")
+ws5.merge_cells(start_row=4, start_column=mstart, end_row=4, end_column=ZF + n_weeks - 1)
+
+r = 6
+for (floor, name, typ, enter, exit_, weeks, ps, order) in S.zones():
+    ws5.cell(r, 1, order).alignment = Alignment(horizontal="center")
+    fc = ws5.cell(r, 2, floor); fc.alignment = Alignment(horizontal="center")
+    ws5.cell(r, 3, name).font = Font(bold=("★" in name))
+    ws5.cell(r, 4, typ).alignment = Alignment(horizontal="center")
+    e1 = ws5.cell(r, 5, enter); e1.number_format = "m/d"; e1.alignment = Alignment(horizontal="center")
+    e2 = ws5.cell(r, 6, exit_); e2.number_format = "m/d"; e2.alignment = Alignment(horizontal="center")
+    ws5.cell(r, 7, weeks).alignment = Alignment(horizontal="center")
+    # 分段上色
+    for j, (trade, start) in enumerate(ps):
+        seg_end = ps[j + 1][1] if j + 1 < len(ps) else exit_
+        a = week_idx(start); b = week_idx(seg_end)
+        for w in range(a, max(a + 1, b)):
+            ws5.cell(r, ZF + w).fill = hex_fill(S.SEG_COLOR[trade])
+        lc = ws5.cell(r, ZF + a)
+        lc.value = trade
+        lc.font = Font(size=7, color=("222222" if trade in ("人造石","燈具","鷹架") else "FFFFFF"))
+    r += 1
+
+ws5.column_dimensions["A"].width = 5
+ws5.column_dimensions["B"].width = 6
+ws5.column_dimensions["C"].width = 34
+ws5.column_dimensions["D"].width = 7
+ws5.column_dimensions["E"].width = 7
+ws5.column_dimensions["F"].width = 7
+ws5.column_dimensions["G"].width = 4
+for w in range(n_weeks):
+    ws5.column_dimensions[get_column_letter(ZF + w)].width = 3.4
+ws5.freeze_panes = ws5.cell(6, ZF)
+ws5.sheet_view.showGridLines = False
+# 工種圖例
+lg = r + 2
+ws5.cell(lg, 3, "工種圖例").font = Font(bold=True)
+for i, (k, c) in enumerate(S.SEG_COLOR.items()):
+    ws5.cell(lg + 1 + i, 2).fill = hex_fill(c)
+    ws5.cell(lg + 1 + i, 3, f"{k}：{S.SEG_LABEL[k]}")
+
 import os
 os.makedirs("docs", exist_ok=True)
 out = "docs/工程進度甘特圖.xlsx"
 wb.save(out)
-print("saved:", out, "| weeks:", n_weeks, "| tasks:", len(TASKS))
+print("saved:", out, "| weeks:", n_weeks, "| tasks:", len(TASKS), "| zones:", len(S.zones()))
