@@ -11,7 +11,8 @@
 
 | 文件 | 說明 |
 |---|---|
-| [工程進度甘特圖.xlsx](docs/工程進度甘特圖.xlsx) | **Excel 版**：週曆式甘特圖＋進度表＋預算總覽＋安排建議（可編輯） |
+| [碧侯教會_工程規劃報告.pdf](docs/碧侯教會_工程規劃報告.pdf) | **整合 PDF 報告**（封面+預算+甘特圖+進度表+施工順序+分區時程+建議，可列印/開會） |
+| [工程進度甘特圖.xlsx](docs/工程進度甘特圖.xlsx) | **Excel 版**：甘特圖＋進度表＋預算＋安排建議＋分區進場時程（5 工作表，可編輯） |
 | [工程進度甘特圖.png](docs/工程進度甘特圖.png) | 全案工程進度甘特圖（規劃建議版，含關鍵路徑與里程碑） |
 | [細部施工順序圖.png](docs/細部施工順序圖.png) | 細部施工順序圖（依空間類型，涵蓋所有區域） |
 | [細部施工順序.md](docs/細部施工順序.md) | 逐區施工工序明細＋空間類型對照＋跨區依存 |
@@ -38,6 +39,7 @@ PYTHONPATH=scripts python scripts/generate_excel.py     # → docs/工程進度�
 PYTHONPATH=scripts python scripts/generate_markdown.py  # → docs/工程進度表.md
 PYTHONPATH=scripts python scripts/generate_sequence.py       # → docs/細部施工順序圖.png
 PYTHONPATH=scripts python scripts/generate_zone_schedule.py  # → docs/分區進場時程圖.png + 表.md
+PYTHONPATH=scripts python scripts/generate_report_pdf.py     # → docs/碧侯教會_工程規劃報告.pdf
 ```
 
 > 排程為規劃版，實際依現場、備料、天候與業主決議滾動調整。
