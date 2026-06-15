@@ -13,6 +13,8 @@
 |---|---|
 | [工程進度甘特圖.xlsx](docs/工程進度甘特圖.xlsx) | **Excel 版**：週曆式甘特圖＋進度表＋預算總覽＋安排建議（可編輯） |
 | [工程進度甘特圖.png](docs/工程進度甘特圖.png) | 全案工程進度甘特圖（規劃建議版，含關鍵路徑與里程碑） |
+| [細部施工順序圖.png](docs/細部施工順序圖.png) | 細部施工順序圖（依空間類型，涵蓋所有區域） |
+| [細部施工順序.md](docs/細部施工順序.md) | 逐區施工工序明細＋空間類型對照＋跨區依存 |
 | [工程進度表.md](docs/工程進度表.md) | 工項預算總覽、進度明細、里程碑、關鍵路徑 |
 | [工程安排建議.md](docs/工程安排建議.md) | 工程安排建議書（風險、備料、工序、界面整合、管控） |
 
@@ -32,6 +34,7 @@ pip install matplotlib openpyxl
 PYTHONPATH=scripts python scripts/generate_gantt.py     # → docs/工程進度甘特圖.png（需 Noto Sans CJK 字型）
 PYTHONPATH=scripts python scripts/generate_excel.py     # → docs/工程進度甘特圖.xlsx
 PYTHONPATH=scripts python scripts/generate_markdown.py  # → docs/工程進度表.md
+PYTHONPATH=scripts python scripts/generate_sequence.py  # → docs/細部施工順序圖.png
 ```
 
 > 排程為規劃版，實際依現場、備料、天候與業主決議滾動調整。
